@@ -1,3 +1,4 @@
+#Python 3.10
 from pocketbase import PocketBase #pocketbase==0.10.1
 import websocket #websocket-client==1.7.0
 import json
@@ -38,6 +39,7 @@ class Client:
     def createJoinRoom(self, authToken:str, worldID:str, onMessageCallback, onErrorCallback, onCloseCallback):
         self.client.auth_store.save(authToken)
         response = self.client.send(f"/api/joinkey/{self.ROOM_TYPE}/{worldID}", {})
+        print("PocketBase response", response)
         token = response["token"]
         self.socket = websocket.WebSocketApp(f"{self.API_ROOM_LINK}/room/{token}",
                                              on_message = onMessageCallback,
@@ -74,7 +76,7 @@ def onMessage(ws: websocket.WebSocketApp, message):
     match buffer[0]:
         case Client.EventTypes.Ping:
             print("Received ping")
-            ws.send(bytes([Client.EventTypes.Ping]))
+            ws.send(bytes([Client.EventTypes.Ping])) #TODO not working.
 
         case Client.EventTypes.Message:
             print()
