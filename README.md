@@ -1,3 +1,4 @@
+### Introduction
 Python implementation of a bot for PixelWalker, including low-level websocket/API stuff.
 
 1. PixelWalker forum thread: https://forums.everybodyedits.com/viewtopic.php?pid=799235#p799235
