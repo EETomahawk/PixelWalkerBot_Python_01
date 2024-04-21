@@ -7,7 +7,7 @@ import struct
 class Client:
     API_ACCOUNT_LINK = "https://lgso0g8.116.202.52.27.sslip.io"
     API_ROOM_LINK = "wss://po4swc4.116.202.52.27.sslip.io"
-    ROOM_TYPE = "pixelwalker1"
+    ROOM_TYPE = "pixelwalker2"
 
     class EventTypes:
         Ping      = 63  #0x3F = "?"
