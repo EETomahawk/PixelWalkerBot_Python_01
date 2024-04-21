@@ -1,3 +1,5 @@
+**Disclaimer**: This code is WIP and this repo tracks ongoing development. No code/information in here is likely to be fully correct/working unless I tag it as such.
+
 ### Introduction
 Python implementation of a bot for PixelWalker, including low-level websocket/API stuff.
 
