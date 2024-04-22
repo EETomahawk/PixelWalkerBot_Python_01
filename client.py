@@ -41,7 +41,8 @@ class Client:
         self.socket = websocket.WebSocketApp(f"{self.WEBSOCKET_URL}/room/{roomToken}",
                                              on_message = onMessageCallback,
                                              on_error = onErrorCallback,
-                                             on_close = onCloseCallback)
+                                             on_close = onCloseCallback,
+                                             on_data= onData)
         self.socket.run_forever()
 
     def disconnect(self):
@@ -69,18 +70,21 @@ def onError(ws, error):
 def onClose(ws, code, reason):
     print("onClose", code, reason)
 
+def onData(ws, data, opcode, cont):
+    print("onData opcode", opcode)
+
 def onMessage(ws: websocket.WebSocketApp, message):
     buffer = bytearray(message)
     if buffer[0] == Client.EventTypes.Ping:
         print("Received ping", message)
-        ws.send(b'?', websocket.ABNF.OPCODE_PONG)  # TODO not working.
-    elif not buffer[0] == Client.EventTypes.Message: return
+        #ws.send(b'?')  #TODO
+    elif not buffer[0] == Client.EventTypes.Message:
+        print("Received unexpected message header type:", buffer[0])
+        return
     match buffer[1]: #Assume message ID <128, else need to decode the varint.
         case Client.MessageTypes.init:
             print("Received init")
-            #ws.send(b"\x6B\x01\x00", opcode=websocket.ABNF.OPCODE_BINARY) #TODO no effect
-
-            #await this.send(Magic(0x6B), Bit7(MessageType['init']))
+            #ws.send(b"\x6B\x01", opcode=websocket.ABNF.OPCODE_BINARY)
         case _:
             print("Received message type", buffer[1])
 
