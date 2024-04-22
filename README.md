@@ -1,13 +1,28 @@
-**Disclaimer**: This project is WIP and this repo tracks ongoing development. No code/information in here is guaranteed working/correct unless I tag it as such.
+**Disclaimer**: This bot is WIP and this repo tracks ongoing development. Don't expect fully working code or up-to-date information.
 
 ### Introduction
 Python implementation of a bot for PixelWalker, including low-level websocket/API stuff.
 
-1. PixelWalker forum thread: https://forums.everybodyedits.com/viewtopic.php?pid=799235#p799235
-2. PixelWalker Discord: https://discord.com/invite/rDgtbbzDqX
-3. Anatoly's JS bot used as reference: https://github.com/Anatoly03/pixelwalker.js/tree/main
-4. Block IDs: https://po4swc4.116.202.52.27.sslip.io/mappings
-5. PixelWalker site: https://bg0gwwg.116.202.52.27.sslip.io/
+1. PixelWalker site: https://bg0gwwg.116.202.52.27.sslip.io/
+2. PixelWalker forum thread: https://forums.everybodyedits.com/viewtopic.php?pid=799235#p799235
+3. PixelWalker Discord: https://discord.com/invite/rDgtbbzDqX
+4. Block IDs: https://po4swc4.116.202.52.27.sslip.io/mappings 
+5. Anatoly's JS bot used as reference: https://github.com/Anatoly03/pixelwalker.js/tree/main
+
+### Getting an authentication token for the bot
+1. Go to the PixelWalker website and log in
+2. Open developer tools (F12) and go to the **Network** tab
+3. Refresh the website
+4. Look for a file called `auth-refresh` near the bottom of the list and click on it
+5. Under "Request Headers", find the "Authorization" key (see screenshot below)
+6. The value of this key is your auth token. <u>**DO NOT SHARE IT!!**</u>
+7. This token lasts for two weeks before expiring. You can check this using https://jwt.io/ 
+
+<details>
+<summary>Screenshot</summary>
+
+![Finding the auth token](https://cdn.discordapp.com/attachments/1230093943941758977/1231626846005760131/image.png?ex=6627d2e2&is=66268162&hm=aca73c8570b63ce2ad7fddcf719373039d3e64207e9e0e8d09dba09ba3e1880f&)
+</details>
 
 ### Message Buffer
 *Source: Priddle*

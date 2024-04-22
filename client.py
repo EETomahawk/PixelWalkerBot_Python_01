@@ -1,12 +1,12 @@
 #Python 3.10
-from pocketbase import PocketBase #pocketbase==0.10.1
+import requests  #requests==2.31.0
 import websocket #websocket-client==1.7.0
 import json
 import struct
 
 class Client:
-    API_ACCOUNT_LINK = "https://lgso0g8.116.202.52.27.sslip.io"
-    API_ROOM_LINK = "wss://po4swc4.116.202.52.27.sslip.io"
+    API_URL = "https://lgso0g8.116.202.52.27.sslip.io"
+    WEBSOCKET_URL = "wss://po4swc4.116.202.52.27.sslip.io"
     ROOM_TYPE = "pixelwalker2"
 
     class EventTypes:
@@ -33,15 +33,12 @@ class Client:
         keyPressed       = 16
 
     def __init__(self):
-        self.client = PocketBase(self.API_ACCOUNT_LINK)
         self.socket = None
 
-    def createJoinRoom(self, authToken:str, worldID:str, onMessageCallback, onErrorCallback, onCloseCallback):
-        self.client.auth_store.save(authToken)
-        response = self.client.send(f"/api/joinkey/{self.ROOM_TYPE}/{worldID}", {})
-        #print("PocketBase response", response)
-        token = response["token"]
-        self.socket = websocket.WebSocketApp(f"{self.API_ROOM_LINK}/room/{token}",
+    def createJoinRoom(self, authToken:str, roomID:str, onMessageCallback, onErrorCallback, onCloseCallback):
+        url = f"{self.API_URL}/api/joinkey/{self.ROOM_TYPE}/{roomID}"
+        roomToken = requests.get(url, headers={"Authorization":authToken}).json()["token"]
+        self.socket = websocket.WebSocketApp(f"{self.WEBSOCKET_URL}/room/{roomToken}",
                                              on_message = onMessageCallback,
                                              on_error = onErrorCallback,
                                              on_close = onCloseCallback)
@@ -74,21 +71,18 @@ def onClose(ws, code, reason):
 
 def onMessage(ws: websocket.WebSocketApp, message):
     buffer = bytearray(message)
-    match buffer[0]:
-        case Client.EventTypes.Ping:
-            print("Received ping")
-            ws.send(bytes([Client.EventTypes.Ping])) #TODO not working.
+    if buffer[0] == Client.EventTypes.Ping:
+        print("Received ping", message)
+        ws.send(b'?', websocket.ABNF.OPCODE_PONG)  # TODO not working.
+    elif not buffer[0] == Client.EventTypes.Message: return
+    match buffer[1]: #Assume message ID <128, else need to decode the varint.
+        case Client.MessageTypes.init:
+            print("Received init")
+            #ws.send(b"\x6B\x01\x00", opcode=websocket.ABNF.OPCODE_BINARY) #TODO no effect
 
-        case Client.EventTypes.Message:
-            print()
-            match buffer[1]: #Assume <=128, else need to varint decode.
-                case Client.MessageTypes.init:
-                    print("Received init")
-                    client.send(b"\x6B",b"\x01",b"\x00") #TODO no effect
-                    #await this.send(Magic(0x6B), Bit7(MessageType['init']))
-            pass
+            #await this.send(Magic(0x6B), Bit7(MessageType['init']))
         case _:
-            print("onMessage unexpected header", buffer[0])
+            print("Received message type", buffer[1])
 
 # def accept_event(self, buffer):
 #     event_id, offset = read7BitInt(buffer, 0)
