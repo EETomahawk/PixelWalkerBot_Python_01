@@ -2,7 +2,7 @@
 import requests  #requests==2.31.0
 import websocket #websocket-client==1.7.0
 import json
-import struct
+#import struct
 
 class Client:
     API_URL = "https://lgso0g8.116.202.52.27.sslip.io"
@@ -10,8 +10,8 @@ class Client:
     ROOM_TYPE = "pixelwalker2"
 
     class EventTypes:
-        Ping      = 63  #0x3F = "?"
-        Message   = 107 #0x6B = "k"
+        Ping      = 63  #0x3F = b"?"
+        Message   = 107 #0x6B = b"k"
 
     class MessageTypes:
         init             = 0
@@ -48,15 +48,12 @@ class Client:
     def disconnect(self):
         if self.socket: self.socket.close()
 
-    def send(self, *args):
-        if not self.socket: print("Can't send - not connected.")
-        else:
-            try: self.socket.send(b"".join(args))
-            except Exception as error:
-                print('Send error', error)
-
-    # def magic(value):
-    #     return struct.pack('B', value)
+    # def send(self, *args):
+    #     if not self.socket: print("Can't send - not connected.")
+    #     else:
+    #         try: self.socket.send(b"".join(args))
+    #         except Exception as error:
+    #             print('Send error', error)
 
 #=======================================================================================================================
 
@@ -84,17 +81,10 @@ def onMessage(ws: websocket.WebSocketApp, message):
     match buffer[1]: #Assume message ID <128, else need to decode the varint.
         case Client.MessageTypes.init:
             print("Received init")
-            #ws.send(b"\x6B\x01", opcode=websocket.ABNF.OPCODE_BINARY)
+            #ws.send(b"\x6B\x01", opcode=websocket.ABNF.OPCODE_BINARY) #TODO
         case _:
             print("Received message type", buffer[1])
 
-# def accept_event(self, buffer):
-#     event_id, offset = read7BitInt(buffer, 0)
-#     event_name = next((k for k, v in MessageType.items() if v == event_id), None)
-#     data = deserialise(buffer, offset)
-#     self.emit(event_name, data)
-
-#def readEventBuffer(self, buffer)
 #=======================================================================================================================
 config = loadConfig()
 token = config["token"]
@@ -103,7 +93,7 @@ roomID = config["roomID"]
 client = Client()
 client.createJoinRoom(token, roomID, onMessage, onError, onClose)
 
-#
+
 # def read_7bit_int(buffer: bytes, offset: int) -> (int,int):
 #     value = 0
 #     shift = 0
