@@ -1,8 +1,15 @@
 #Python 3.10
+from datetime import datetime
 import requests  #requests==2.31.0
 import websocket #websocket-client==1.7.0
 import json
-#import struct
+import struct
+from time import sleep
+from threading import Thread
+
+_print=print
+def print(*args, **kwargs):
+    _print(f"[{str(datetime.now().time())[:-3]}]",*args, **kwargs)
 
 class Client:
     API_URL = "https://lgso0g8.116.202.52.27.sslip.io"
@@ -42,7 +49,7 @@ class Client:
                                              on_message = onMessageCallback,
                                              on_error = onErrorCallback,
                                              on_close = onCloseCallback,
-                                             on_data= onData)
+                                             on_data = onData)
         self.socket.run_forever()
 
     def disconnect(self):
@@ -67,21 +74,19 @@ def onError(ws, error):
 def onClose(ws, code, reason):
     print("onClose", code, reason)
 
-def onData(ws, data, opcode, cont):
+def onData(ws, data, opcode, _):
     print("onData opcode", opcode)
 
 def onMessage(ws: websocket.WebSocketApp, message):
     buffer = bytearray(message)
     if buffer[0] == Client.EventTypes.Ping:
-        print("Received ping", message)
-        #ws.send(b'?')  #TODO
+        ws.send(b'?', opcode=websocket.ABNF.OPCODE_BINARY)  #TODO
     elif not buffer[0] == Client.EventTypes.Message:
         print("Received unexpected message header type:", buffer[0])
         return
     match buffer[1]: #Assume message ID <128, else need to decode the varint.
         case Client.MessageTypes.init:
-            print("Received init")
-            #ws.send(b"\x6B\x01", opcode=websocket.ABNF.OPCODE_BINARY) #TODO
+            ws.send(b"\x6b\x00", opcode=websocket.ABNF.OPCODE_BINARY) #TODO
         case _:
             print("Received message type", buffer[1])
 

@@ -3,3 +3,6 @@ config.json
 
 #Pycharm stuff.
 .idea/
+
+#TLS keys for Wireshark websocket debugging.
+secrets.log

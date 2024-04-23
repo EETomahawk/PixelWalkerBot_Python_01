@@ -11,3 +11,9 @@ def y(y:str):
 
 Thread(target=x).start()
 Thread(target=y, args=["test"]).start()
+
+#=========================================
+import os
+#Save TLS secrets to logfile for Wireshark to use to decrypt websocket TLS comms.
+os.environ["SSLKEYLOGFILE"] = "secrets.log"
+#=========================================
