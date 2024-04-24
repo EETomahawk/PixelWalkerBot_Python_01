@@ -25,7 +25,7 @@ Python implementation of a bot for PixelWalker, including low-level websocket/AP
 </details>
 
 ### Websocket received data
-*Source: Priddle*
+*Source: Priddle, 2024-04-21*
 > First byte of a websocket response is the header, this can either be 0x3F for a ping (which must be returned!) or 0x6B for a message.  
 > If it's a message, second entry is a 7-bit encoded integer, which is the message type.
 >
