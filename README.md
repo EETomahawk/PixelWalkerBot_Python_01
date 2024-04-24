@@ -3,10 +3,10 @@
 ### Introduction
 Python implementation of a bot for PixelWalker, including low-level websocket/API stuff.
 
-1. PixelWalker site: https://bg0gwwg.116.202.52.27.sslip.io/
+1. PixelWalker site: https://pixelwalker.net/
 2. PixelWalker forum thread: https://forums.everybodyedits.com/viewtopic.php?pid=799235#p799235
 3. PixelWalker Discord: https://discord.com/invite/rDgtbbzDqX
-4. Block IDs: https://po4swc4.116.202.52.27.sslip.io/mappings 
+4. Block IDs: https://game.pixelwalker.net/mappings
 5. Anatoly's JS bot used as reference: https://github.com/Anatoly03/pixelwalker.js/tree/main
 
 ### Getting an authentication token for the bot
