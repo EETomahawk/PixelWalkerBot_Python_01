@@ -1,8 +1,8 @@
-#Token, roomID.
-config.json
+#Auth token, roomID.
+**/config.json
 
 #Pycharm stuff.
 .idea/
 
 #TLS keys for Wireshark websocket debugging.
-secrets.log
+**/secrets.log
