@@ -12,9 +12,9 @@ def print(*args, **kwargs):
     _print(f"[{str(datetime.now().time())[:-3]}]",*args, **kwargs)
 
 class Client:
-    API_URL = "https://lgso0g8.116.202.52.27.sslip.io"
-    WEBSOCKET_URL = "wss://po4swc4.116.202.52.27.sslip.io"
-    ROOM_TYPE = "pixelwalker2"
+    API_URL = "https://api.pixelwalker.net"
+    WEBSOCKET_URL = "wss://game.pixelwalker.net"
+    ROOM_TYPE = "pixelwalker3"
 
     class EventTypes:
         Ping      = 63  #0x3F = b"?"

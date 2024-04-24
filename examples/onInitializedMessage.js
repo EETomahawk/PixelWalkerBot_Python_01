@@ -1,4 +1,4 @@
-//Sourced from https://bg0gwwg.116.202.52.27.sslip.io/assets/game-Z4JOaMqb.js, v0.4.1-alpha
+//Sourced from https://bg0gwwg.116.202.52.27.sslip.io/assets/game-Z4JOaMqb.js, v0.4.1-alpha, 2024-04-23
 onInitializedMessage(t)
 {
     switch (t.type) {
