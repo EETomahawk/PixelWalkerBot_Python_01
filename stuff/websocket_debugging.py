@@ -1,4 +1,4 @@
-#Correct as of 2024-04-24
+#Correct as of 2024-04-24, Python 3.10, Wireshark 4.2.4
 import os
 os.environ["SSLKEYLOGFILE"] = "./secrets.log"
 #Now connect the bot websocket to generate the secrets.log.
