@@ -1,4 +1,6 @@
 #Python 3.10
+#Correct for PixelWalker v0.5.0-alpha
+
 from datetime import datetime
 import requests  #requests==2.31.0
 import websocket #websocket-client==1.7.0
@@ -21,28 +23,36 @@ class Client:
         Message   = 107 #0x6B = b"k"
 
     class MessageTypes:
-        init             = 0
-        updateRights     = 1
-        worldMetadata    = 2
-        worldCleared     = 3
-        chatMessage      = 4
-        systemMessage    = 5
-        playerJoined     = 6
-        playerLeft       = 7
-        playerMoved      = 8
-        playerFace       = 9
-        playerGodMode    = 10
-        playerModMode    = 11
-        playerCheckpoint = 12
-        playerRespawn    = 13
-        placeBlock       = 14
-        crownTouched     = 15
-        keyPressed       = 16
+        PlayerInit          = 0
+        UpdateRights        = 1
+        WorldMetadata       = 2
+        WorldCleared        = 3
+        WorldReloaded       = 4
+        WorldBlockPlaced    = 5
+        ChatMessage         = 6
+        SystemMessage       = 7
+        PlayerJoined        = 8
+        PlayerLeft          = 9
+        PlayerMoved         = 10
+        PlayerFace          = 11
+        PlayerGodMode       = 12
+        PlayerModMode       = 13
+        PlayerCheckpoint    = 14
+        PlayerRespawn       = 15
+        PlayerReset         = 16
+        PlayerCrown         = 17
+        PlayerKeyPressed    = 18
+        PlayerCounters      = 19
+        PlayerWin           = 20
+        PlayerLocalSwitchChanged    = 21
+        PlayerLocalSwitchReset      = 22
+        GlobalSwitchChanged         = 23
+        GlobalSwitchReset           = 24
 
     def __init__(self):
         self.socket = None
 
-    def createJoinRoom(self, authToken:str, roomID:str, onMessageCallback, onErrorCallback, onCloseCallback):
+    def joinRoom(self, authToken:str, roomID:str, onMessageCallback, onErrorCallback, onCloseCallback):
         url = f"{self.API_URL}/api/joinkey/{self.ROOM_TYPE}/{roomID}"
         roomToken = requests.get(url, headers={"Authorization":authToken}).json()["token"]
         self.socket = websocket.WebSocketApp(f"{self.WEBSOCKET_URL}/room/{roomToken}",
@@ -85,7 +95,7 @@ def onMessage(ws: websocket.WebSocketApp, message):
         print("Received unexpected message header type:", buffer[0])
         return
     match buffer[1]: #Assume message ID <128, else need to decode the varint.
-        case Client.MessageTypes.init:
+        case Client.MessageTypes.PlayerInit:
             ws.send(b"\x6b\x00", opcode=websocket.ABNF.OPCODE_BINARY) #TODO
         case _:
             print("Received message type", buffer[1])
@@ -96,7 +106,7 @@ token = config["token"]
 roomID = config["roomID"]
 
 client = Client()
-client.createJoinRoom(token, roomID, onMessage, onError, onClose)
+client.joinRoom(token, roomID, onMessage, onError, onClose)
 
 
 # def read_7bit_int(buffer: bytes, offset: int) -> (int,int):
