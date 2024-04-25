@@ -3,7 +3,6 @@ import requests #requests==2.31.0
 import re
 from io import BytesIO
 from PIL import Image #pillow==10.3.0
-import json
 
 gameURL = "https://pixelwalker.net"
 gameHTML = requests.get(f"{gameURL}/game.html").text #Download page HTML.
@@ -12,6 +11,7 @@ gameHTML = requests.get(f"{gameURL}/game.html").text #Download page HTML.
 clientJSID = re.search('(?<="/assets/game-)[^.]+(?=\.js")', gameHTML).group()
 jsURL = f"{gameURL}/assets/game-{clientJSID}.js" #Build URL to JS file.
 gameJS = requests.get(jsURL).text #Get JS file contents.
+gameJS = re.sub("\s+", "", gameJS) #Remove all whitespace to make regex searching consistent.
 
 #PNG containing all blocks has similar naming format to JS file. Find it in the JS.
 tilesetID = re.search('(?<="/assets/tile_atlas-)[^.]+(?=\.png")', gameJS).group()
@@ -21,7 +21,7 @@ tilesetPNG = Image.open(BytesIO(requests.get(tilesetURL).content)) #Download PNG
 tilesetJSArray = re.search("(?<=\[)[^\]]+(?=])", gameJS.split(tilesetID, 1)[1]).group()
 #Cannot easily convert this JS array of objects to JSON for parsing. Instead, manually parse it.
 
-tilesNames = []
+tileNames = []
 
 rawTileInfo = tilesetJSArray.split("filename:")[1:]
 for rawTile in rawTileInfo:
@@ -35,12 +35,22 @@ for rawTile in rawTileInfo:
     blockImage = tilesetPNG.crop((x, y, x+16, y+16))
 
     #blockImage.save(f"./images/{name.replace('/','_')}.png")
-    tilesNames.append(name)
+    tileNames.append(name)
 
-print(tilesNames)
-# im = Image.open("test.jpg")
-#
-# crop_rectangle = (50, 50, 200, 200)
-# cropped_im = im.crop(crop_rectangle)
-## Note that the crop region must be given as a 4-tuple - (left, upper, right, lower).
-#cropped_im.show()
+#Search JS for Empty=0. Use this to get the list of block names and IDs.
+#Everything between "Empty=0" and ")"
+rawBlockIDs = re.search("(?<=Empty=0)[^)]+(?=\))", gameJS).group().split(",")
+
+
+#Split apart the items in the above list to get the stuff in square brackets.
+
+print(tileNames)
+
+
+
+#For MD maybe:
+# blocks = {
+#     "imageFile": "...",
+#     "blockName": "...",
+#     "blockID": 0
+# }
