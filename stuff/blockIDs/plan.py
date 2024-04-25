@@ -1,24 +1,11 @@
 #Potential dumb way of generating table of block images, names and IDs:
 
-# Download https://game.pixelwalker.net/mappings
 # Download game JS
-# Regex search JS for /assets/tile_atlas-dasdas.png to get the tile map PNG name.
-# Download tile_atlas... .png
+# Regex search JS for /assets/tile_atlas-######.png to get the tile map PNG name.
+# Download tile_atlas PNG
 # Parse the subsequent list after the tilemap name in the JS to get the block names and locations in tilemap.
-# Match the block names in the JS against the block names in the mappings JSON
-
-Mapping:
-"gravity_left": 1,
-"gravity_up": 2,
-"gravity_right": 3,
-"gravity_down": 4,
-"gravity_dot": 5,
-"gravity_slow_dot": 6,
-"boost_left": 7,
-"boost_up": 8,
-"boost_right": 9,
-...
-"basic_cyan": 54,
+# Use this info to generate separate PNGs for each block, along with their "filename"
+# Use this "filename" to find the more colloquial block names and their blockIDs elsewhere in the JS - see below
 
 
 JS:
@@ -79,4 +66,6 @@ const Xo = Yo(Ko)
         w: 16,
         h: 16
     }
+    },
+    ...
 """
