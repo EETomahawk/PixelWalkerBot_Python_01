@@ -1,5 +1,7 @@
 #Potential dumb way of generating table of block images, names and IDs:
 
+# Download https://pixelwalker.net/game.html
+# Parse HTML to find game JS link - e.g. https://pixelwalker.net/assets/game-cwptkMuL.js
 # Download game JS
 # Regex search JS for /assets/tile_atlas-######.png to get the tile map PNG name.
 # Download tile_atlas PNG
@@ -12,9 +14,11 @@
   # No need to update block list if version hasn't changed.... hopefully
 
 # Turn the above steps into a Python script
-# Look into using Python stdlib for the HTTP GETs to avoid dependency on external requests lib (optional)
 # Set up GitHub Action to run script and commit resulting .md table into this repo
   # https://www.python-engineer.com/posts/run-python-github-actions/
+
+HTML:
+<script type="module" crossorigin src="/assets/game-cwptkMuL.js"></script>
 
 JS:
 n[n.GravityLeft = 1] = "GravityLeft",
@@ -31,7 +35,6 @@ n[n.BoostDown = 10] = "BoostDown",
 
 
 JS:
-"""
 const Xo = Yo(Ko)
   , Vo = "/assets/tile_atlas-GalCJu8M.png"
   , Wo = [{
@@ -74,6 +77,25 @@ const Xo = Yo(Ko)
         w: 16,
         h: 16
     }
+},
+...
+
+
+const ha = "0.5.0-alpha"
+  , da = "pixelwalker3"
+  , fa = 960
+  , pa = 540
+  , ma = !1
+  , ga = !1
+  , wa = "6LdD-qkpAAAAACv27wO3p7n_cKcO7TrIWQpdXVZr"
+  , ya = {
+    game: {
+        host: "game.pixelwalker.net",
+        secure: !0
     },
-    ...
-"""
+    api: "https://api.pixelwalker.net"
+}
+  , _a = {
+    version: ha,
+    roomType: da,
+    gameWidth: fa,
