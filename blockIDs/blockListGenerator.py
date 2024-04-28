@@ -16,6 +16,13 @@ jsURL = f"{gameURL}/assets/game-{clientJSID}.js" #Build URL to JS file.
 gameJS = requests.get(jsURL).text #Get JS file contents.
 gameJS = re.sub("\s+", "", gameJS) #Remove all whitespace to make regex searching consistent.
 
+#Get game version from JS. String in double quotes before pixelwalker# room type.
+currentGameVersion = re.search('"[^\"]+"[^\"]+(?="pixelwalker\d+")', gameJS).group().split('"')[1]
+with open("./lastVersionGenerated.txt", "r", encoding="utf-8") as file:
+    lastVersionGenerated = file.read()
+if currentGameVersion == lastVersionGenerated:
+    exit(0)
+
 #PNG containing all blocks has similar naming format to JS file. Find it in the JS.
 #Find substring between "/assets/tile_atlas-" and '.png"'
 tilesetID = re.search('(?<="/assets/tile_atlas-)[^.]+(?=\.png")', gameJS).group()
@@ -91,11 +98,9 @@ for n in cutoff:
     #if len(cutoff) > 1 and n == cutoff[-2]: blockList.clear() #For debugging.
 #print(f"{len(blockList)}/{len(blockNamesAndIDs)+len(blockList)} matched. {len(blockNamesAndIDs)} remaining.")
 
-#Get game version from JS. String in double quotes before pixelwalker# room type.
-gameVersion = re.search('"[^\"]+"[^\"]+(?="pixelwalker\d+")', gameJS).group().split('"')[1]
 timestamp = str(datetime.utcnow())[:-7] + " UTC"
 #Start of markdown file.
-s = f"*Generated at {timestamp} using game client version {gameVersion}.*\n"
+s = f"*Generated at {timestamp} using game client version {currentGameVersion}.*\n"
 s += "## Block IDs:\n"
 s += "**WARNING:** This list is automatically generated using the game client's JS source. "
 s += "It may have errors, and it might stop working after an update.  \n"
@@ -103,9 +108,12 @@ s += "**NOTE:** The block names below are purely descriptive. "
 s += "They don't match [mappings.json](https://game.pixelwalker.net/mappings).\n\n"
 s += "|Image|ID|Name|\n|---|---|---|\n" #Table header.
 
-with(open("./README.md", "w", encoding="utf-8") as file): #Overwrite file.
+with(open("./README.md", "w", encoding="utf-8") as file): #Overwrite markdown file.
     file.write(s)
     for ID, info in sorted(blockList.items()): #Sort by blockID.
         n = info["imageName"] + ".png" #Filename for image alt text.
         p = "./images/" + n #Relative path to image.
         file.write(f"|![{n}]({p})|{ID}|{info['blockName']}|\n")
+
+with open("./lastVersionGenerated.txt", "w", encoding="utf-8") as file:
+    file.write(currentGameVersion)

@@ -10,15 +10,17 @@
 # Use this "filename" to find the more colloquial block names and their blockIDs elsewhere in the JS - see below
 # Build a markdown-formatted table of blocks
 # Consider doing the same with smileys
-# Find a way to check the game version programatically - parse client JS probably
+# Find a way to check the game version programmatically - parse client JS probably
   # No need to update block list if version hasn't changed.... hopefully
 
 # Turn the above steps into a Python script
 # Set up GitHub Action to run script and commit resulting .md table into this repo
   # https://www.python-engineer.com/posts/run-python-github-actions/
 
+
 HTML:
 <script type="module" crossorigin src="/assets/game-cwptkMuL.js"></script>
+
 
 JS:
 n[n.GravityLeft = 1] = "GravityLeft",
@@ -81,6 +83,7 @@ const Xo = Yo(Ko)
 ...
 
 
+JS:
 const ha = "0.5.0-alpha"
   , da = "pixelwalker3"
   , fa = 960
