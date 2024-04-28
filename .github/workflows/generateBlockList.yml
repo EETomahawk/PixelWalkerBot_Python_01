@@ -21,15 +21,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests==2.31.0 pillow==10.3.0
           
-      - name: execute py script # run main.py
-        run: python ./blockIDs/generateBlockList.py
+      - name: execute py script
+        run: |
+          cd ./blockIDs
+          python ./blockIDs/generateBlockList.py
           
       - name: commit files
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add -A
-          git diff-index --quiet HEAD || (git commit -a -m "Automated blockIDs update." --allow-empty)
+          git diff-index --quiet HEAD || (git commit -a -m "generateBlockList Action." --allow-empty)
           
       - name: push changes
         uses: ad-m/github-push-action@master
