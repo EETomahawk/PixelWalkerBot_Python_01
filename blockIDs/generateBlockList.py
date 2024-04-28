@@ -54,7 +54,7 @@ currentGameVersion = re.search('"[^\"]+"[^\"]+(?="pixelwalker\d+")', gameJS).gro
 with open("./lastVersionGenerated.txt", "r", encoding="utf-8") as file:
     lastVersionGenerated = file.read()
 if currentGameVersion == lastVersionGenerated:
-    logging.info("Game version unchanged. Terminating.")
+    print("Game version unchanged. Terminating.")
     exit(0)
 else: #Delete all PNGs in ./images.
     for f in glob("./images/*.png"): remove(f)
