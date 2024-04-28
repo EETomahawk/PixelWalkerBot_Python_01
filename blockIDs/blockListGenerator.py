@@ -4,6 +4,7 @@ import re
 from io import BytesIO
 from PIL import Image #pillow==10.3.0
 from difflib import get_close_matches
+from datetime import datetime
 
 gameURL = "https://pixelwalker.net"
 gameHTML = requests.get(f"{gameURL}/game.html").text #Download page HTML.
@@ -90,8 +91,12 @@ for n in cutoff:
     #if len(cutoff) > 1 and n == cutoff[-2]: blockList.clear() #For debugging.
 #print(f"{len(blockList)}/{len(blockNamesAndIDs)+len(blockList)} matched. {len(blockNamesAndIDs)} remaining.")
 
+#Get game version from JS. String in double quotes before pixelwalker# room type.
+gameVersion = re.search('"[^\"]+"[^\"]+(?="pixelwalker\d+")', gameJS).group().split('"')[1]
+timestamp = str(datetime.utcnow())[:-7] + " UTC"
 #Start of markdown file.
-s = "## Block IDs:\n"
+s = f"*Generated at {timestamp} using game client version {gameVersion}.*\n"
+s += "## Block IDs:\n"
 s += "**WARNING:** This list is automatically generated using the game client's JS source. "
 s += "It may have errors, and it might stop working after an update.  \n"
 s += "**NOTE:** The block names below are purely descriptive. "
