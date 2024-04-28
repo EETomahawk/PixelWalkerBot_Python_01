@@ -1,4 +1,21 @@
 #Python 3.10
+
+#Summary:
+# Download https://pixelwalker.net/game.html.
+# Parse HTML to find game JS link - e.g. https://pixelwalker.net/assets/game-cwptkMuL.js.
+# Download game JS.
+# Check if game version has changed. If not, terminate.
+# Regex search JS for /assets/tile_atlas-######.png to get name of tilemap of all blocks.
+# Download tilemap png.
+# Parse the subsequent list after the tilemap name in the JS to get the block names and locations in tilemap.
+# Use this info to pull out the PNG of each block from the tilemap, along with its "filename".
+# Find the list of blockIDs and block names elsewhere in the JS. These names don't exactly match the tile names.
+# Match up the block names with the tile names so that we know which tile PNG is which blockID.
+# Build a README markdown file with a table of blocks.
+# Use GitHub Actions to run this script periodically.
+
+import logging
+import traceback, sys
 import requests #requests==2.31.0
 import re
 from glob import glob
@@ -7,8 +24,6 @@ from io import BytesIO
 from PIL import Image #pillow==10.3.0
 from difflib import get_close_matches
 from datetime import datetime
-import traceback, sys
-import logging
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(filename="./blockListGenerator.log", #Logging to file.
