@@ -141,8 +141,8 @@ s = f"`Generated at {timestamp} using game client version {currentGameVersion}.`
 s += "## Block IDs:\n"
 s += "**WARNING:** This list is automatically generated using the game client's JS source. "
 s += "It may have errors, and it might stop working after an update.  \n"
-s += "**NOTE:** The block names below are purely descriptive. "
-s += "They don't match [mappings.json](https://game.pixelwalker.net/mappings).\n\n"
+s += "**NOTE:** The block names below are descriptive and aren't guaranteed to match "
+s += "[mappings.json](https://game.pixelwalker.net/mappings).\n\n"
 s += "|Image|ID|Name|\n|---|---|---|\n" #Table header.
 
 with(open("./README.md", "w", encoding="utf-8") as file): #Overwrite markdown file.
