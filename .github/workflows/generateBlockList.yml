@@ -32,7 +32,7 @@ jobs:
           git diff-index --quiet HEAD || (git commit -a -m "Automated blockIDs update." --allow-empty)
           
       - name: push changes
-        uses: ad-m/github-push-action@main
+        uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: main 
