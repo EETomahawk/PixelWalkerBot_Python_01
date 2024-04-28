@@ -22,9 +22,8 @@ jobs:
           pip install requests==2.31.0 pillow==10.3.0
           
       - name: execute py script
-        run: |
-          cd ./blockIDs
-          python ./blockIDs/generateBlockList.py
+        working-directory: ./blockIDs
+        run: python generateBlockList.py
           
       - name: commit files
         run: |
