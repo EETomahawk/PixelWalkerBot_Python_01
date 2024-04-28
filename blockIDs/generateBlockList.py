@@ -36,6 +36,7 @@ logging.basicConfig(filename="./blockListGenerator.log", #Logging to file.
 def handle_exception(exc_type, exc_value, exc_traceback):
   error = "".join(traceback.format_exception(exc_type, exc_value, exc_traceback)) #Format exception as str.
   logging.fatal(error) #Log exception to file.
+  print("Fatal error. See ./blockListGenerator.log")
   exit(-1) #Terminate.
 sys.excepthook = handle_exception #Call this method for any unhandled exception.
 
@@ -155,3 +156,4 @@ with open("./lastVersionGenerated.txt", "w", encoding="utf-8") as file: #Keep re
     file.write(currentGameVersion)
 
 logging.info(f"Generated block list for {currentGameVersion}.")
+print(f"Generated block list for {currentGameVersion}.")
