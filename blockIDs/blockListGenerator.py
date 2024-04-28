@@ -1,10 +1,28 @@
 #Python 3.10
 import requests #requests==2.31.0
 import re
+from glob import glob
+from os import remove
 from io import BytesIO
 from PIL import Image #pillow==10.3.0
 from difflib import get_close_matches
 from datetime import datetime
+import traceback, sys
+import logging
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename="./blockListGenerator.log", #Logging to file.
+                    filemode='a',
+                    encoding="utf-8",
+                    format='%(asctime)s | %(levelname)s | %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S',
+                    level=logging.INFO)
+
+def handle_exception(exc_type, exc_value, exc_traceback):
+  error = "".join(traceback.format_exception(exc_type, exc_value, exc_traceback)) #Format exception as str.
+  logging.fatal(error) #Log exception to file.
+  exit(-1) #Terminate.
+sys.excepthook = handle_exception #Call this method for any unhandled exception.
 
 gameURL = "https://pixelwalker.net"
 gameHTML = requests.get(f"{gameURL}/game.html").text #Download page HTML.
@@ -21,7 +39,10 @@ currentGameVersion = re.search('"[^\"]+"[^\"]+(?="pixelwalker\d+")', gameJS).gro
 with open("./lastVersionGenerated.txt", "r", encoding="utf-8") as file:
     lastVersionGenerated = file.read()
 if currentGameVersion == lastVersionGenerated:
+    logging.info("Game version unchanged. Terminating.")
     exit(0)
+else: #Delete all PNGs in ./images.
+    for f in glob("./images/*.png"): remove(f)
 
 #PNG containing all blocks has similar naming format to JS file. Find it in the JS.
 #Find substring between "/assets/tile_atlas-" and '.png"'
@@ -81,7 +102,7 @@ blockNamesAndIDs = {k:re.sub(r'(?<!^)(?=[A-Z])', '_', v).lower().replace("bg","b
 blockList = {}
 
 #Do multiple passes at decreasing confidence levels to match up the strings.
-#Eliminate each matched tile to improve subsequent matches/iterations.
+#Eliminate each matched pair to improve subsequent matches/iterations.
 cutoff = [0.8, 0.5, 0]
 for n in cutoff:
     for blockID, blockName in blockNamesAndIDs.copy().items():
@@ -94,13 +115,13 @@ for n in cutoff:
             #Remove match from both collections, since we're doing multiple passes.
             tileNames.remove(tileName)
             del blockNamesAndIDs[blockID]
-
-    #if len(cutoff) > 1 and n == cutoff[-2]: blockList.clear() #For debugging.
+    #For debugging:
+    #if len(cutoff) > 1 and n == cutoff[-2]: blockList.clear()
 #print(f"{len(blockList)}/{len(blockNamesAndIDs)+len(blockList)} matched. {len(blockNamesAndIDs)} remaining.")
 
 timestamp = str(datetime.utcnow())[:-7] + " UTC"
 #Start of markdown file.
-s = f"*Generated at {timestamp} using game client version {currentGameVersion}.*\n"
+s = f"`Generated at {timestamp} using game client version {currentGameVersion}.`\n"
 s += "## Block IDs:\n"
 s += "**WARNING:** This list is automatically generated using the game client's JS source. "
 s += "It may have errors, and it might stop working after an update.  \n"
@@ -115,5 +136,7 @@ with(open("./README.md", "w", encoding="utf-8") as file): #Overwrite markdown fi
         p = "./images/" + n #Relative path to image.
         file.write(f"|![{n}]({p})|{ID}|{info['blockName']}|\n")
 
-with open("./lastVersionGenerated.txt", "w", encoding="utf-8") as file:
+with open("./lastVersionGenerated.txt", "w", encoding="utf-8") as file: #Keep record of latest game version.
     file.write(currentGameVersion)
+
+logging.info(f"Generated block list for {currentGameVersion}.")
