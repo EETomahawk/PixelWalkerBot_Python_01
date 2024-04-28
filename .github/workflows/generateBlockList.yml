@@ -8,29 +8,29 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     steps:
-      - name: checkout repo content
+      - name: Checkout repository
         uses: actions/checkout@v4 # checkout the repository content to github runner
 
-      - name: setup python
+      - name: Python setup
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
           
-      - name: install python packages
+      - name: Install python packages
         run: pip install requests==2.31.0 pillow==10.3.0
           
-      - name: execute py script
+      - name: Execute generateBlockList.py
         working-directory: ./blockIDs
         run: python generateBlockList.py
           
-      - name: commit files
+      - name: Commit files
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add -A
-          git diff-index --quiet HEAD || (git commit -a -m "generateBlockList Action." --allow-empty)
+          git diff-index --quiet HEAD || (git commit -a -m "GITHUB-ACTION generateBlockList.py" --allow-empty)
           
-      - name: push changes
+      - name: Push changes
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
