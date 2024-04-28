@@ -94,7 +94,7 @@ for n in cutoff:
 s = "## Block IDs:\n"
 s += "**WARNING:** This list is automatically generated using the game client's JS source. "
 s += "It may have errors, and it might stop working after an update.  \n"
-s += "**NOTE:** The block names below are purely descriptive."
+s += "**NOTE:** The block names below are purely descriptive. "
 s += "They don't match [mappings.json](https://game.pixelwalker.net/mappings).\n\n"
 s += "|Image|ID|Name|\n|---|---|---|\n" #Table header.
 

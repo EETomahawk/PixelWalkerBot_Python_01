@@ -1,13 +1,17 @@
-**Disclaimer**: This bot is WIP and this repo tracks ongoing development. Don't expect fully working code or up-to-date information.
+**Disclaimer**: This bot is WIP and this repo tracks ongoing development. Some code may be buggy, and some information may be out of date.
 
 ### Introduction
 Python implementation of a bot for PixelWalker, including low-level websocket/API stuff.
 
-1. PixelWalker site: https://pixelwalker.net/
-2. PixelWalker forum thread: https://forums.everybodyedits.com/viewtopic.php?pid=799235#p799235
-3. PixelWalker Discord: https://discord.com/invite/rDgtbbzDqX
-4. Block IDs: https://game.pixelwalker.net/mappings
-5. Anatoly's JS bot used as reference: https://github.com/Anatoly03/pixelwalker.js
+### Links
+| Description              | URL                                                      |
+|--------------------------|----------------------------------------------------------|
+| PixelWalker Website      | https://pixelwalker.net/                                 |
+| Block IDs                | [./blockIDs/README.md](./blockIDs/README.md)             |
+| Room Types               | https://game.pixelwalker.net/listroomtypes               |
+| Block Mappings           | https://game.pixelwalker.net/mappings                    |
+| PixelWalker Forum Thread | https://forums.everybodyedits.com/viewtopic.php?id=48007 |
+| PixelWalker Discord      | https://discord.com/invite/rDgtbbzDqX                    |
 
 ### Getting an authentication token for the bot
 1. Go to the PixelWalker website and log in
