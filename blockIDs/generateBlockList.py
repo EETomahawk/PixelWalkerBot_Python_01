@@ -26,7 +26,7 @@ from difflib import get_close_matches
 from datetime import datetime
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(filename="./blockListGenerator.log", #Logging to file.
+logging.basicConfig(filename="./generateBlockList.log", #Logging to file.
                     filemode='a',
                     encoding="utf-8",
                     format='%(asctime)s UTC | %(levelname)s | %(message)s',
