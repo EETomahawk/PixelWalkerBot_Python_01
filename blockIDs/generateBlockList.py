@@ -36,7 +36,8 @@ logging.basicConfig(filename="./generateBlockList.log", #Logging to file.
 def handle_exception(exc_type, exc_value, exc_traceback):
   error = "".join(traceback.format_exception(exc_type, exc_value, exc_traceback)) #Format exception as str.
   logging.fatal(error) #Log exception to file.
-  print("Fatal error. See ./blockListGenerator.log")
+  print("Fatal error. See ./generateBlockList.log")
+  print(error) #For debugging GitHub Action.
   exit(-1) #Terminate.
 sys.excepthook = handle_exception #Call this method for any unhandled exception.
 
