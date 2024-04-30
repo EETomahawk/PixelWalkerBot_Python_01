@@ -9,13 +9,14 @@
 # Download tilemap png.
 # Parse the subsequent list after the tilemap name in the JS to get the block names and locations in tilemap.
 # Use this info to pull out the PNG of each block from the tilemap, along with its "filename".
-# Find the list of blockIDs and block names elsewhere in the JS. These names don't exactly match the tile names.
-# Match up the block names with the tile names so that we know which tile PNG is which blockID.
+# Download https://game.pixelwalker.net/mappings JSON.
+# Do some voodoo to match up the block names with the tiles' "filenames".
 # Build a README markdown file with a table of blocks.
 # Use GitHub Actions to run this script periodically.
 
 import logging
-import traceback, sys
+from traceback import format_exception
+import sys
 import requests #requests==2.31.0
 import re
 from glob import glob
@@ -34,10 +35,10 @@ logging.basicConfig(filename="./generateBlockList.log", #Logging to file.
                     level=logging.INFO)
 
 def handle_exception(exc_type, exc_value, exc_traceback):
-  error = "".join(traceback.format_exception(exc_type, exc_value, exc_traceback)) #Format exception as str.
+  error = "".join(format_exception(exc_type, exc_value, exc_traceback)) #Format exception as str.
+  print("FATAL", error)
   logging.fatal(error) #Log exception to file.
-  print("Fatal error. See ./generateBlockList.log")
-  print(error) #For debugging GitHub Action.
+  logging.shutdown() #Flush logs before terminating.
   exit(-1) #Terminate.
 sys.excepthook = handle_exception #Call this method for any unhandled exception.
 
@@ -86,64 +87,62 @@ for rawTile in tilesetJSArray.split("filename:")[1:]:
     blockImage = tilesetPNG.crop((x, y, x+16, y+16))
 
     tileName = name.replace('/','_')
-    #Manipulate the tileName a bit to improve get_close_matches().
-    #Remove "foreground_" and "decoration" as these don't appear in the JS list of block IDs and names.
-    for s in ["foreground_", "decoration_", "hazards_"]:
-        tileName = tileName.replace(s,"")
-    #Put "background_" at the front of the string.
-    if tileName.startswith("background_"): tileName = tileName[11:] + "_background"
+
+    #Manipulate the tileName a bit to improve matching.
+    #Remove prefixes that don't appear in mappings JSON.
+    for s in ["foreground_", "decoration_", "hazards_", "keys_",
+              "coin_doors_and_gates_", "extra_", "coins_", "generic_",
+              "death_", "spawn_", "liquids_", "switches_"]:
+        if tileName.startswith(s): tileName = tileName.removeprefix(s)
+
+    #Move "background_" to end of string and change to "_bg".
+    if tileName.startswith("background_"): tileName = tileName[11:] + "_bg"
+    #Rearrange local/global switch strings to improve matching.
+    # elif tileName.startswith("switches_local"):
+    #     tileName = tileName.replace("switches_local", "local_switch")
+    # elif tileName.startswith("switches_global"):
+    #     tileName = tileName.replace("switches_global", "global_switch")
 
     blockImage.save(f"./images/{tileName}.png")
     tileNames.append(tileName)
 
-#Search JS for Empty=0. This is start of a different list containing block IDs and names.
-#These names are different from the tile names above, so need to match them together.
-#Everything between "Empty=0" and ")"
-rawBlockIDs = re.search("(?<=Empty=0)[^)]+(?=\))", gameJS).group().split(",")
-
-#For each item, extract substring between . and ] - e.g. "GravityLeft=1". Ignore first line (block ID 0).
-rawBlockNamesAndIDs = [re.search("(?<=\.)[^\]]+(?=])", item).group() for item in rawBlockIDs if "." in item]
-
-#Turn that into a dict where the keys are the names and the values are the block IDs.
-blockNamesAndIDs = {0:"Empty"} | {x[1]:x[0] for x in [item.split("=",1) for item in rawBlockNamesAndIDs]}
-
-#tileNames list has the names of the block images in format "background/basic/blue", "foreground/candy/platform_green" etc.
-#blockNamesAndIDs has block ID, and names in format "BasicBlue", "CandyPlatformGreen" etc.
-#Need to match them up. e.g. "NormalRedBg" and "background_normal_red"
-
-#Make blockNamesAndIDs names more list the other list:
-#Assume the strings are PascalCase and convert to snake_case. #Change "bg" to "background".
-blockNamesAndIDs = {k:re.sub(r'(?<!^)(?=[A-Z])', '_', v).lower().replace("bg","background")
-                    for k,v in blockNamesAndIDs.items()}
+mappingsURL = "https://game.pixelwalker.net/mappings"
+mappings = requests.get(mappingsURL).json() #Download mappings JSON. Convert to dict.
 
 blockList = {}
-
 #Do multiple passes at decreasing confidence levels to match up the strings.
 #Eliminate each matched pair to improve subsequent matches/iterations.
-cutoff = [0.8, 0.5, 0]
+cutoff = [1, 0.9, 0.8, 0.7, 0.5, 0]
 for n in cutoff:
-    for blockID, blockName in blockNamesAndIDs.copy().items():
+    for blockName, blockID in mappings.copy().items():
         matches = get_close_matches(blockName, tileNames, n=1, cutoff=n)
         if matches: #Non-empty list - i.e. match found at confidence above this cutoff.
             tileName = matches[0]
-            blockList[int(blockID)] = {
+            blockList[blockID] = {
                 "blockName": blockName,
                 "imageName": tileName }
             #Remove match from both collections, since we're doing multiple passes.
             tileNames.remove(tileName)
-            del blockNamesAndIDs[blockID]
+            del mappings[blockName]
+
     #For debugging:
-    #if len(cutoff) > 1 and n == cutoff[-2]: blockList.clear()
-#print(f"{len(blockList)}/{len(blockNamesAndIDs)+len(blockList)} matched. {len(blockNamesAndIDs)} remaining.")
+#=============================================================================================
+#    if len(cutoff) > 1 and n == cutoff[-2]: blockList.clear()
+# print(f"{len(blockList)}/{len(mappings)+len(blockList)} matched. {len(mappings)} remaining.")
+#
+# with open("./mappings.txt", "w", encoding="utf-8") as file:
+#     file.writelines("\n".join(mappings))
+# with open("./tileset.txt", "w", encoding="utf-8") as file:
+#     file.writelines("\n".join(tileNames))
+#=============================================================================================
 
 timestamp = str(datetime.utcnow())[:-7] + " UTC"
 #Start of markdown file.
 s = f"`Generated at {timestamp} using game client version {currentGameVersion}.`\n"
 s += "## Block IDs:\n"
-s += "**WARNING:** This list is automatically generated using the game client's JS source. "
-s += "It may have errors, and it might stop working after an update.  \n"
-s += "**NOTE:** The block names below are descriptive and aren't guaranteed to match "
-s += "[mappings.json](https://game.pixelwalker.net/mappings).\n\n"
+s += "**WARNING:** This list is automatically generated and may have errors. "
+s += "It should update every 12 hours - double-check whether the game version "
+s += "at the start of this file matches the client version.\n\n"
 s += "|Image|ID|Name|\n|---|---|---|\n" #Table header.
 
 with(open("./README.md", "w", encoding="utf-8") as file): #Overwrite markdown file.
