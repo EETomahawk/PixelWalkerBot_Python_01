@@ -1,4 +1,4 @@
-`Generated at 2024-05-03 08:33:15 UTC using game client version 0.7.0-alpha.`
+`Generated at 2024-05-06 17:09:32 UTC using game client version 0.7.1-alpha.`
 ## Block IDs:
 **WARNING:** This list is automatically generated and may have errors. It should update every 12 hours - double-check whether the game version at the start of this file matches the client version.
 
