@@ -141,8 +141,8 @@ timestamp = str(datetime.utcnow())[:-7] + " UTC"
 s = f"`Generated at {timestamp} using game client version {currentGameVersion}.`\n"
 s += "## Block IDs:\n"
 s += "**WARNING:** This list is automatically generated and may have errors. "
-s += "It should update every 12 hours - double-check whether the game version "
-s += "at the start of this file matches the client version.\n\n"
+s += "It should refresh every 30 mins - double-check whether the game version "
+s += "above matches the client version on pixelwalker.net\n\n"
 s += "|Image|ID|Name|\n|---|---|---|\n" #Table header.
 
 with(open("./README.md", "w", encoding="utf-8") as file): #Overwrite markdown file.
