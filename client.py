@@ -16,7 +16,7 @@ def print(*args, **kwargs):
 class Client:
     API_URL = "https://api.pixelwalker.net"
     WEBSOCKET_URL = "wss://game.pixelwalker.net"
-    ROOM_TYPE = "pixelwalker3"
+    ROOM_TYPE = requests.get("https://game.pixelwalker.net/listroomtypes").json()[0]
 
     class EventTypes:
         Ping      = 63  #0x3F = b"?"
@@ -90,7 +90,8 @@ def onData(ws, data, opcode, _):
 def onMessage(ws: websocket.WebSocketApp, message):
     buffer = bytearray(message)
     if buffer[0] == Client.EventTypes.Ping:
-        ws.send(b'?', opcode=websocket.ABNF.OPCODE_BINARY)  #TODO
+        print("Received ping. Sending 0x63 byte.")
+        ws.send(b'?\x00', opcode=websocket.ABNF.OPCODE_BINARY)  #TODO
     elif not buffer[0] == Client.EventTypes.Message:
         print("Received unexpected message header type:", buffer[0])
         return
