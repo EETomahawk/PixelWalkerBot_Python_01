@@ -25,7 +25,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OWNER: ${{ github.repository_owner }}
           REPO: ${{ github.event.repository.name }}
-          GITHUB_CONTEXT: ${{ toJSON(github) }}
         #Run the py script. If it fails, use GitHub CLI to disable this workflow.
         run: >
           python generateBlockList.py ||
