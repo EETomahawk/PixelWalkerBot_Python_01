@@ -14,8 +14,6 @@
 # Build a README markdown file with a table of blocks.
 # Use GitHub Actions to run this script periodically.
 
-exit(-1) #TESTING
-
 import logging
 from traceback import format_exception
 import sys
