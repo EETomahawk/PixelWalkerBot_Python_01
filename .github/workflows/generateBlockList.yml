@@ -22,16 +22,14 @@ jobs:
       - name: Run generateBlockList.py
         working-directory: ./blockIDs
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          OWNER: ${{ github.repository_owner }}
-          REPO: ${{ github.event.repository.name }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} #Needed for GH CLI commands.
         #Run the py script. If it fails, use GitHub CLI to disable this workflow.
         run: >
           python generateBlockList.py ||
           gh api --method PUT
           -H "Accept: application/vnd.github+json"
           -H "X-GitHub-Api-Version: 2022-11-28"
-          /repos/"$OWNER"/"$REPO"/actions/workflows/generateBlockList.yml/disable
+          /repos/${{github.repository_owner}}/${{github.event.repository.name}}/actions/workflows/generateBlockList.yml/disable
           
       - name: Commit
         run: |
