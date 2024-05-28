@@ -36,8 +36,10 @@ logging.basicConfig(filename="./generateBlockList.log", #Logging to file.
 
 def handle_exception(exc_type, exc_value, exc_traceback):
   error = "".join(format_exception(exc_type, exc_value, exc_traceback)) #Format exception as str.
-  print("FATAL", error)
-  logging.fatal(error) #Log exception to file.
+  print(error)
+  if "currentGameVersion" in globals(): #If variable currentGameVersion is defined.
+    logging.fatal(f"Failed to update block list for v{currentGameVersion}.") #Log note to file.
+  else: logging.fatal(f"Failed to update block list.") #Log note to file.
   logging.shutdown() #Flush logs before terminating.
   exit(-1) #Terminate.
 sys.excepthook = handle_exception #Call this method for any unhandled exception.
@@ -52,8 +54,8 @@ jsURL = f"{gameURL}/assets/game-{clientJSID}.js" #Build URL to JS file.
 gameJS = requests.get(jsURL).text #Get JS file contents.
 gameJS = re.sub("\s+", "", gameJS) #Remove all whitespace to make regex searching consistent.
 
-#Get game version from JS. String in double quotes before pixelwalker# room type.
-currentGameVersion = re.search('"[^\"]+"[^\"]+(?="pixelwalker\d+")', gameJS).group().split('"')[1]
+#Get game version from JS. String in double quotes before pixelwalker_YYYY_MM_DD room type.
+currentGameVersion = re.search('"[^\"]+"[^\"]+(?="pixelwalker_202\d_\d\d_\d\d")', gameJS).group().split('"')[1]
 with open("./lastVersionGenerated.txt", "r", encoding="utf-8") as file:
     lastVersionGenerated = file.read()
 if currentGameVersion == lastVersionGenerated:
@@ -141,8 +143,8 @@ timestamp = str(datetime.utcnow())[:-7] + " UTC"
 s = f"`Generated at {timestamp} using game client version {currentGameVersion}.`\n"
 s += "## Block IDs:\n"
 s += "**WARNING:** This list is automatically generated and may have errors. "
-s += "It should refresh every 30 mins - double-check whether the game version "
-s += "above matches the client version on pixelwalker.net\n\n"
+s += "Double-check whether the game version above matches the client version "
+s += "on pixelwalker.net\n\n"
 s += "|Image|ID|Name|\n|---|---|---|\n" #Table header.
 
 with(open("./README.md", "w", encoding="utf-8") as file): #Overwrite markdown file.
