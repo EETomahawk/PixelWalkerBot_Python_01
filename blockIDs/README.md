@@ -1,4 +1,4 @@
-`Generated at 2024-06-14 21:37:35 UTC using game client version 0.9.0-alpha.`
+`Generated at 2024-06-14 22:16:04 UTC using game client version 0.9.1-alpha.`
 ## Block IDs:
 **WARNING:** This list is automatically generated and may have errors. Double-check whether the game version above matches the client version on pixelwalker.net
 
