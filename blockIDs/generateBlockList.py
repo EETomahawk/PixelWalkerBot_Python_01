@@ -64,7 +64,7 @@ if currentGameVersion == lastVersionGenerated:
     print("Game version unchanged. Terminating.")
     exit(0)
 else: #Delete all PNGs in ./images.
-    for f in glob("./images/*.png"): remove(f) #TODO don't delete existing images if code below crashes.
+    for f in glob("./images/*.png"): remove(f)
 
 #PNG containing all blocks has similar naming format to JS file. Find it in the JS.
 #Find substring between "/assets/tile_atlas-" and '.png"'
