@@ -2,43 +2,17 @@
 
 #Summary:
 # Download https://pixelwalker.net/game.html.
-# Parse HTML to find game JS link - e.g. https://pixelwalker.net/assets/game-cwptkMuL.js.
-# Download game JS.
-# Check if game version has changed. If not, terminate.
-# Regex search JS for /assets/tile_atlas-######.png to get name of tilemap of all blocks.
+# Parse HTML to find game JS file URL and download the JS.
+# Search for game version in JS. If no update since last script execution, terminate script.
+# Regex search JS for /assets/tile_atlas-######.png to get name of tilemap containing all blocks.
 # Download tilemap png.
-# Parse the subsequent list after the tilemap name in the JS to get the block names and locations in tilemap.
-# Use this info to pull out the PNG of each block from the tilemap, along with its "filename".
-
-#v1
-# Download https://game.pixelwalker.net/mappings JSON.
-# Do some voodoo to match up the block names with the tiles' "filenames".
-# Build a README markdown file with a table of blocks.
-# Use GitHub Actions to run this script periodically.
-
-#NEW v2:
-# Get the dictionary in the initBlocks() function, which lists blocks in block ID order:
-    # static initBlocks() {
-    #         const e = {
-    #             idhyH: "Gravity",
-    #             DkyRy: "extra/empty",
-    #             fuDoe: "foreground/gravity/left",
-    #             ztOTx: "foreground/gravity/up",
-    #             LdqUl: "foreground/gravity/right",
-    #             JcRRg: "foreground/gravity/down",
-    #             bjwKl: "foreground/gravity/dot",
-    #             IeuxZ: "foreground/gravity/slow_dot",
-    #             yBnXy: "Boost",
-    #             qBgwf: "foreground/boost/left",
-    #             gFhXF: "foreground/boost/up",
-    #             TZEIm: "foreground/boost/right",
-    #             mrtNx: "foreground/boost/down",
-    #             AdAwp: "Climbable",
-    #             ZmRNO: "foreground/jungle/vine_vertical",
-    #             LOwaf: "foreground/jungle/vine_horizontal",
-    #             ...
+# Parse the JS array of tilemap blocks to get the block names and locations in tilemap.
+# Use this to extract the PNG of each block from the tilemap, along with its "filename".
+# Get the dictionary in the initBlocks() function which lists blocks in block ID order.
 # All(?) real blocks have forward slashes, else they are block pack names.
-# The block names exactly match the tilemap dict block names. No need to match strings.
+# The block names exactly match the tilemap block names.
+# Save all the block PNGs to ./images
+# Build a README table with the embedded block images, names and IDs.
 
 #TODO: decode JS initSmileys() to get smileys as well.
 
@@ -90,18 +64,17 @@ if currentGameVersion == lastVersionGenerated:
     print("Game version unchanged. Terminating.")
     exit(0)
 else: #Delete all PNGs in ./images.
-    for f in glob("./images/*.png"): remove(f)
+    for f in glob("./images/*.png"): remove(f) #TODO don't delete existing images if code below crashes.
 
 #PNG containing all blocks has similar naming format to JS file. Find it in the JS.
 #Find substring between "/assets/tile_atlas-" and '.png"'
 tilesetID = re.search('(?<="/assets/tile_atlas-)[^.]+(?=\.png")', gameJS).group()
 tilesetURL = f"{gameURL}/assets/tile_atlas-{tilesetID}.png" #Build URL to PNG containing all blocks.
-tilesetPNG = Image.open(BytesIO(requests.get(tilesetURL).content)) #Download PNG and load it into Pillow.
+tilesetPNG = Image.open(BytesIO(requests.get(tilesetURL).content)) #Download and open PNG.
 
-#Find substring after tileset filename between square brackets.
-#This is JS array of objects describing the blocks in the tileset and their names.
-tilesetJSArray = re.search("(?<=\[)[^\]]+(?=])", gameJS.split(tilesetID, 1)[1]).group()
-#Cannot easily convert this JS array of objects to JSON for parsing. Instead, manually parse it.
+#Find JS array [] containing filename:"background/basic/black"
+#This lists all the blocks in the tileset PNG and their names.
+tilesetJSArray = gameJS[gameJS.split('filename:"background/basic/black"')[0].rfind("["):].split("]",1)[0]
 
 tiles = {} #name: Image
 
@@ -127,10 +100,12 @@ blocks = [] #List with either package name (str) or Tuple(blockID, blockName, fi
 bID = 0
 for item in blockList:
     if "/" not in item: #String is name of block pack.
-        blocks.append(item)
+        continue
+        #blocks.append(item)
     else: #String is block name.
         #Tidy up block name.
-        blockName = item.replace("extra/","").replace("foreground/","").replace("background/","").replace("/","_")
+        #blockName = item.replace("extra/","").replace("foreground/","").replace("background/","")
+        blockName = item.replace("/", "_")
         fileName = f"{bID}_{blockName}.png"
         blocks.append((bID, blockName, fileName)) #Append block info tuple to list.
         tiles[item].save(f"./images/{fileName}") #Save block as PNG to ./images/ dir.
@@ -144,17 +119,18 @@ s += "## Block IDs:\n"
 s += "**WARNING:** This list is automatically generated and may have errors. "
 s += "Double-check whether the game version above matches the client version "
 s += "on pixelwalker.net\n\n"
-s += "|Package|Image|ID|Name|\n|---|---|---|\n" #Table header.
+#s += "|Package|Image|ID|Name|\n|---|---|---|\n" #Table header.
+s += "|Image|ID|Name|\n|---|---|---|\n" #Table header.
 
 with(open("./README.md", "w", encoding="utf-8") as file): #Overwrite existimng README file.
     file.write(s)
     for item in blocks:
-        if type(item) is str:
-            pass
-        else:
-            blockID, blockName, fileName = item
-            path = "./images/" + fileName #Relative path to image.
-            file.write(f"|![{fileName}]({path})|{blockID}|{blockName}|\n")
+        # if type(item) is str:
+        #     pass
+        # else:
+        blockID, blockName, fileName = item
+        path = "./images/" + fileName #Relative path to image.
+        file.write(f"|![{fileName}]({path})|{blockID}|{blockName}|\n")
 
 with open("./lastVersionGenerated.txt", "w", encoding="utf-8") as file: #Keep record of latest game version.
     file.write(currentGameVersion)
