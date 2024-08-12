@@ -46,7 +46,7 @@ def handle_exception(exc_type, exc_value, exc_traceback):
   exit(-1) #Terminate.
 sys.excepthook = handle_exception #Call this method for any unhandled exception.
 
-gameURL = "https://pixelwalker.net"
+gameURL = "https://client.pixelwalker.net"
 gameHTML = requests.get(f"{gameURL}/game.html").text #Download page HTML.
 
 #Game client JS file has format "game-cwptkMuL.js". Find this random string in the HTML using regex.
@@ -90,26 +90,18 @@ for rawTile in tilesetJSArray.split("filename:")[1:]:
     tiles[name] = tilesetPNG.crop((x, y, x+16, y+16))
 
 
-#Retrieve the JS object of block names from the initBlocks() function.
-#Find substring between { and } AFTER initBlocks(){
-blockObject = re.search("(?<={)[^}]+", gameJS.split("initBlocks(){")[1]).group()
-#Get a list of the strings in the object. These are the package and block names.
-blockList = re.findall('"(.*?)"', blockObject)
+#Retrieve the initBlocks(){...} function contents. Fragile.
+initBlocks = re.search("(?<=initBlocks\(\){)[^}]+(?=})", gameJS).group()
+#Get every double-quoted string in this function that contains a forward slash.
+rawBlockNames = [s for s in re.findall('"([^"]*)"', initBlocks) if "/" in s]
 
 blocks = [] #List with either package name (str) or Tuple(blockID, blockName, fileName)
-bID = 0
-for item in blockList:
-    if "/" not in item: #String is name of block pack.
-        continue
-        #blocks.append(item)
-    else: #String is block name.
-        #Tidy up block name.
-        #blockName = item.replace("extra/","").replace("foreground/","").replace("background/","")
-        blockName = item.replace("/", "_")
-        fileName = f"{bID}_{blockName}.png"
-        blocks.append((bID, blockName, fileName)) #Append block info tuple to list.
-        tiles[item].save(f"./images/{fileName}") #Save block as PNG to ./images/ dir.
-        bID += 1
+for bID, rawBlockName in enumerate(rawBlockNames):
+    #Tidy up block name.
+    blockName = rawBlockName.replace("/", "_")
+    fileName = f"{bID}_{blockName}.png"
+    blocks.append((bID, blockName, fileName)) #Append block info tuple to list.
+    tiles[rawBlockName].save(f"./images/{fileName}") #Save block as PNG to ./images/ dir.
 
 
 timestamp = str(datetime.utcnow())[:-7] + " UTC"
@@ -122,12 +114,9 @@ s += "on pixelwalker.net\n\n"
 #s += "|Package|Image|ID|Name|\n|---|---|---|\n" #Table header.
 s += "|Image|ID|Name|\n|---|---|---|\n" #Table header.
 
-with(open("./README.md", "w", encoding="utf-8") as file): #Overwrite existimng README file.
+with(open("./README.md", "w", encoding="utf-8") as file): #Overwrite existing README file.
     file.write(s)
     for item in blocks:
-        # if type(item) is str:
-        #     pass
-        # else:
         blockID, blockName, fileName = item
         path = "./images/" + fileName #Relative path to image.
         file.write(f"|![{fileName}]({path})|{blockID}|{blockName}|\n")
