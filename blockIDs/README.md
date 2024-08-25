@@ -1,4 +1,4 @@
-`Generated at 2024-08-12 20:22:24 UTC using game client version 0.11.0-alpha.`
+`Generated at 2024-08-25 20:21:57 UTC using game client version 0.12.0-alpha.`
 ## Block IDs:
 **WARNING:** This list is automatically generated and may have errors. Double-check whether the game version above matches the client version on pixelwalker.net
 
@@ -837,8 +837,8 @@
 |![830_decoration_pirate_skeleton_head.png](./images/830_decoration_pirate_skeleton_head.png)|830|decoration_pirate_skeleton_head|
 |![831_decoration_pirate_cannon.png](./images/831_decoration_pirate_cannon.png)|831|decoration_pirate_cannon|
 |![832_decoration_pirate_port_window.png](./images/832_decoration_pirate_port_window.png)|832|decoration_pirate_port_window|
-|![833_background_pirate_wood_plank_brown.png](./images/833_background_pirate_wood_plank_brown.png)|833|background_pirate_wood_plank_brown|
-|![834_background_pirate_wood_plank_light_brown.png](./images/834_background_pirate_wood_plank_light_brown.png)|834|background_pirate_wood_plank_light_brown|
+|![833_background_pirate_wood_plank_light_brown.png](./images/833_background_pirate_wood_plank_light_brown.png)|833|background_pirate_wood_plank_light_brown|
+|![834_background_pirate_wood_plank_brown.png](./images/834_background_pirate_wood_plank_brown.png)|834|background_pirate_wood_plank_brown|
 |![835_background_pirate_wood_plank_dark_brown.png](./images/835_background_pirate_wood_plank_dark_brown.png)|835|background_pirate_wood_plank_dark_brown|
 |![836_background_pirate_skeleton_flag.png](./images/836_background_pirate_skeleton_flag.png)|836|background_pirate_skeleton_flag|
 |![837_foreground_plastic_red.png](./images/837_foreground_plastic_red.png)|837|foreground_plastic_red|
