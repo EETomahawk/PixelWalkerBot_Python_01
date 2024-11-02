@@ -3,7 +3,7 @@ name: run generateBlockList.py
 on:
   workflow_dispatch: #To allow manual triggering of Action.
   schedule:
-    - cron: '*/30 * * * *' #Every 30 mins.
+    - cron: '0 0 * * *' #Every day at midnight.
 jobs:
   build:
     runs-on: ubuntu-22.04
