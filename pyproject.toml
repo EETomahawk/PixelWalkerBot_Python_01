@@ -1,0 +1,6 @@
+[project]
+name = "pixelwalker_py"
+version = "0.0.1"
+
+[project.urls]
+Homepage = "https://github.com/EETomahawk/PixelWalkerBot_Python_01"
