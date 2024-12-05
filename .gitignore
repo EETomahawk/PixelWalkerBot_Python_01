@@ -6,3 +6,6 @@
 
 #TLS keys for Wireshark websocket debugging.
 **/secrets.log
+
+# PixelWalker protocol
+src/pixelwalker_protocol
