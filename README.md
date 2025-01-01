@@ -7,7 +7,7 @@ Python implementation of a bot for PixelWalker, including low-level websocket/AP
 | Description              | URL                                                      |
 |--------------------------|----------------------------------------------------------|
 | PixelWalker Website      | https://pixelwalker.net/                                 |
-| Block IDs                | [./blockIDs/README.md](./blockIDs/README.md)             |
+| Block IDs                | [./blockIDs/README.md](./blockIDs/blockList)             |
 | Room Types               | https://game.pixelwalker.net/listroomtypes               |
 | Block Mappings           | https://game.pixelwalker.net/mappings                    |
 | PixelWalker Forum Thread | https://forums.everybodyedits.com/viewtopic.php?id=48007 |
