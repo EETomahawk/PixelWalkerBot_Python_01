@@ -123,7 +123,7 @@ s += "## Block IDs:\n"
 s += "**WARNING:** This list is automatically generated and may have errors. "
 s += "It may also be out of date, so check whether the game version above "
 s += "matches the client version on pixelwalker.net  \n"
-s += "**NOTE**: The block names below do not exactly match the names in https://game.pixelwalker.net/mappings\n\n"
+s += "**NOTE**: The block names below do not exactly match the names in https://game.pixelwalker.net/listblocks\n\n"
 s += "|Image|ID|Name|\n|---|---|---|\n" #Table header.
 
 with open("blockList.md", "w", encoding="utf-8") as file: #Overwrite existing README file.

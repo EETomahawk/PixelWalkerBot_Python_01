@@ -1,7 +1,7 @@
-`Generated at 2025-03-29 14:42:43 UTC using game client version v0.19.0-alpha.`
+`Generated at 2025-03-29 16:58:20 UTC using game client version v0.19.0-alpha.`
 ## Block IDs:
 **WARNING:** This list is automatically generated and may have errors. It may also be out of date, so check whether the game version above matches the client version on pixelwalker.net  
-**NOTE**: The block names below do not exactly match the names in https://game.pixelwalker.net/mappings
+**NOTE**: The block names below do not exactly match the names in https://game.pixelwalker.net/listblocks
 
 |Image|ID|Name|
 |---|---|---|
