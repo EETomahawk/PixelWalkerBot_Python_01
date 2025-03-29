@@ -140,3 +140,5 @@ with open("./lastVersionGenerated.txt", "w", encoding="utf-8") as file: #Keep re
 
 logging.info(f"Generated block list for {currentGameVersion}.")
 print(f"Generated block list for {currentGameVersion}.")
+
+print("\nNow export blockList.md to blockList.pdf using PyCharm + Pandoc and commit/push.")
